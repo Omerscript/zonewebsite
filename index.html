@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ZONE — الموقع الشخصي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0b0d;
+      --panel:#0f1720;
+      --muted:#9aa4ad;
+      --accent:#7c3aed;
+      --glass: rgba(255,255,255,0.03);
+      --glass-2: rgba(255,255,255,0.02);
+      --card-radius:16px;
+      --text:#e6eef8;
+      --accent-2: #22c1c3;
+      --ultry-accent: #ff2d55;
+    }
+
+    html.light-theme{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --muted:#6b7280;
+      --accent:#f59e0b;
+      --glass: rgba(0,0,0,0.03);
+      --glass-2: rgba(0,0,0,0.02);
+      --text:#0b1220;
+      --accent-2:#0ea5a4;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;font-family: 'Cairo', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.06), transparent), var(--bg);
+      color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;min-height:100vh;padding:32px 20px;transition:background 600ms ease;
+    }
+
+    /* animated background layers */
+    body::before, body::after{
+      content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;transition:opacity 600ms ease}
+    body::before{background:radial-gradient(600px 300px at 80% 20%, rgba(124,58,237,0.12), transparent);opacity:1;mix-blend-mode:screen}
+    body::after{background:radial-gradient(500px 250px at 10% 80%, rgba(34,193,195,0.08), transparent);opacity:1}
+
+    /* ULTRY intense overlay (hidden by default) */
+    .ultry-overlay{position:fixed;inset:0;z-index:5;background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.6));mix-blend-mode:multiply;pointer-events:none;opacity:0;transition:opacity 400ms ease}
+    html.ultry-mode .ultry-overlay{opacity:1}
+
+    .container{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:28px;align-items:start}
+    header.site-header{grid-column:1/-1;display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .brand{display:flex;gap:14px;align-items:center}
+
+    .avatar{width:72px;height:72px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:20px;box-shadow:0 8px 30px rgba(0,0,0,0.4);transform-origin:center;transition:transform 450ms cubic-bezier(.2,.9,.2,1),box-shadow 350ms}
+    .avatar.animated{animation:floaty 6s ease-in-out infinite}
+
+    @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+
+    h1{font-size:22px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+    .controls{display:flex;align-items:center;gap:10px}
+
+    .theme-toggle{cursor:pointer;background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:999px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(6px);transition:transform 220ms}
+    .theme-toggle:active{transform:scale(0.98)}
+    .theme-toggle .icon{width:20px;height:20px;display:inline-block}
+
+    /* ULTRY button */
+    .ultry-btn{cursor:pointer;background:linear-gradient(90deg,var(--ultry-accent),#ff6b6b);padding:10px;border-radius:12px;color:white;font-weight:700;border:0;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(255,45,85,0.12);transition:transform 200ms}
+    .ultry-btn:active{transform:scale(0.98)}
+
+    /* hero */
+    .hero{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:22px;border-radius:var(--card-radius);box-shadow:0 6px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03);transition:transform 500ms}
+    .hero h2{margin:0 0 8px 0;font-size:20px}
+    .hero .meta{display:flex;gap:8px;flex-wrap:wrap}
+    .badge{background:var(--glass-2);padding:6px 10px;border-radius:999px;font-size:13px;color:var(--muted)}
+
+    /* main columns */
+    .left{display:flex;flex-direction:column;gap:20px}
+    .card{background:var(--panel);padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);transition:transform 450ms,box-shadow 350ms}
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 50px rgba(2,6,23,0.6)}
+    h3{margin:0 0 10px 0}
+
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .kv{display:flex;flex-direction:column;gap:6px}
+    .kv b{color:var(--accent);font-weight:600}
+
+    .skill{margin-bottom:10px}
+    .skill .label{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+    .bar{height:10px;background:var(--glass);border-radius:999px;overflow:hidden;margin-top:8px}
+    .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;transition:width 900ms cubic-bezier(.2,.9,.2,1)}
+
+    /* bots & contacts */
+    .links{display:flex;flex-direction:column;gap:10px}
+    .link-btn{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.03);text-decoration:none;color:var(--text);font-weight:600}
+    .link-btn small{color:var(--muted);font-weight:400}
+    .copy-btn{margin-left:auto;background:transparent;border:0;color:var(--muted);cursor:pointer}
+
+    /* right column */
+    .right{position:relative}
+    .card.profile{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;padding-top:26px}
+    .profile .big-avatar{width:120px;height:120px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:#fff;transition:transform 500ms,box-shadow 300ms}
+    .profile small{color:var(--muted)}
+
+    .social-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+    .pill{padding:6px 10px;border-radius:999px;background:var(--glass);font-weight:600}
+
+    footer{grid-column:1/-1;text-align:center;padding:18px;color:var(--muted);font-size:13px}
+
+    /* ULTRY mode styles */
+    html.ultry-mode body{background:radial-gradient(800px 400px at 20% 10%, rgba(255,45,85,0.06), transparent), #080007}
+    html.ultry-mode .avatar{transform:scale(1.08);box-shadow:0 22px 80px rgba(255,45,85,0.18)}
+    html.ultry-mode .big-avatar{transform:scale(1.08) rotate(-6deg);box-shadow:0 30px 120px rgba(255,45,85,0.12)}
+    html.ultry-mode .hero{transform:translateY(-8px)}
+    html.ultry-mode h1, html.ultry-mode h2, html.ultry-mode h3{text-shadow:0 6px 30px rgba(255,45,85,0.06)}
+    html.ultry-mode .bar > i{background:linear-gradient(90deg,var(--ultry-accent),#ff6b6b)}
+
+    /* particle container */
+    #particle-wrap{position:fixed;inset:0;pointer-events:none;z-index:6;opacity:0;transition:opacity 300ms}
+    html.ultry-mode #particle-wrap{opacity:1}
+    .particle{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #fff, var(--ultry-accent));opacity:0.9;filter:blur(6px);mix-blend-mode:screen;transform:translate3d(0,0,0);animation:floatUp linear forwards}
+
+    @keyframes floatUp{from{transform:translateY(30vh) scale(.6) translateX(0);opacity:0.9}to{transform:translateY(-10vh) scale(1.4) translateX(40px);opacity:0}}
+
+    /* responsive */
+    @media (max-width:980px){.container{grid-template-columns:1fr;} .avatar{width:60px;height:60px}}
+  </style>
+</head>
+<body>
+  <div class="ultry-overlay"></div>
+  <div id="particle-wrap"></div>
+
+  <div class="container">
+    <header class="site-header">
+      <div class="brand">
+        <div class="avatar animated">Z</div>
+        <div>
+          <h1>ZONE WEBSITE</h1>
+          <p class="lead">@IEI_T  •  Roblox scripter • AI & Bots dev</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="theme-toggle" id="themeToggle" title="تبديل الوضع (مظلم / مضيء)" role="button" aria-pressed="false">
+          <svg class="icon moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="currentColor" /></svg>
+          <span style="font-size:13px;color:var(--muted)">الوضع المظلم</span>
+        </div>
+
+        <button class="ultry-btn" id="ultryBtn" title="وضع القرائه">وضع قرائه</button>
+      </div>
+    </header>
+
+    <!-- left column -->
+    <main class="left">
+      <section class="card hero">
+        <h2>ZONE WEBSITE</h2>
+        <div class="meta">
+          <span class="badge">العمر: 16 سنة</span>
+          <span class="badge">الشخصية: ENFP</span>
+          <span class="badge">الدولة: العراق</span>
+          <span class="badge">MBTI</span>
+      </section>
+
+      <section class="card">
+        <h3>خبرتي</h3>
+        <div class="grid-2" style="margin-top:8px">
+          <div class="kv"><b>Roblox / Gamedev</b><small class="muted">برنامج سكربتات + خرائط وتجارب لعب</small></div>
+          <div class="kv"><b>Telegram Bots & AI Dev</b><small class="muted">بوتات ذكية وإدارة سيرفرات</small></div>
+          <div class="kv"><b>Free Hosting & Cloud</b><small class="muted">حلول استضافة سريعة ومجانية</small></div>
+          <div class="kv"><b>اللغات</b><small class="muted">Arabic / Egyptian / Saudi / Formal Arabic</small></div>
+        </div>
+
+        <div style="margin-top:14px">
+          <div class="skill"><div class="label"><span>Lua (Roblox)</span><span>90%</span></div><div class="bar"><i style="width:0"></i></div></div>
+          <div class="skill"><div class="label"><span>Python / Bots</span><span>85%</span></div><div class="bar"><i style="width:0"></i></div></div>
+          <div class="skill"><div class="label"><span>DevOps / Hosting</span><span>70%</span></div><div class="bar"><i style="width:0"></i></div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3>نبذة عني</h3>
+        <p style="color:var(--muted)">عيل مجنون اكتشف برمجه وكمبيوتر وبقا مهووس بيهم</p>
+      </section>
+
+      <section class="card">
+        <h3>my friends :</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+          <span class="pill">@Mostafa10831997 - مصطفى</span>
+          <span class="pill">@SAIFMOX - سيف</span>
+          <span class="pill">@LXSPEED - بتاع الغلابه سبيد</span>
+          <span class="pill">@xs_1p - انورتي</span>
+          <span class="pill">@Team2R7 - نادر المعضل</span>
+          <span class="pill">@mu15729 - ليمون الحامض</span>
+          <span class="pill">@A1_F4Y - رويدا</span>
+          <span class="pill">@joy_e70 - اخويا جوي</span>
+          <span class="pill">@y_3ey - معرفهوش بس ربنا يعرفه</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3>بوتاتي (مش كلهم)</h3>
+        <div class="links" style="margin-top:8px">
+          <a class="link-btn" href="https://t.me/IEI_TZBOT" target="_blank">🚀 بوت السيرفر <small>@IEI_TZBOT</small><button class="copy-btn" data-copy="@IEI_TZBOT">نسخ</button></a>
+          <a class="link-btn" href="https://t.me/ZONE_AIBOT" target="_blank">🤖 بوت AI <small>@ZONE_AIBOT</small><button class="copy-btn" data-copy="@ZONE_AIBOT">نسخ</button></a>
+          <a class="link-btn" href="https://t.me/zonescbot" target="_blank">🧩 سكربتات Roblox <small>@zonescbot</small><button class="copy-btn" data-copy="@zonescbot">نسخ</button></a>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- right column -->
+    <aside class="right">
+      <div class="card profile">
+        <div class="big-avatar">Z</div>
+        <div>
+          <h3>ZONE / ØMAR / YUSSIF</h3>
+          <small>@IEI_T</small>
+        </div>
+
+        <div style="width:100%;display:flex;gap:8px;justify-content:center;margin-top:8px">
+          <div style="flex:1;text-align:left"><div style="font-size:12px;color:var(--muted)">العمر</div><div style="font-weight:700">16</div></div>
+          <div style="flex:1;text-align:left"><div style="font-size:12px;color:var(--muted)">البلد</div><div style="font-weight:700">العراق</div></div>
+        </div>
+        <div style="flex:1;text-align:left"><div style="font-size:12px;color:var(--muted)">تاريخ ميلاد</div><div style="font-weight:700">2010/معرفش/معرفش</div></div>
+      </div>
+
+      <div style="height:18px"></div>
+
+      <div class="card">
+        <h3>تواصل</h3>
+        <p style="color:var(--muted);margin-bottom:8px">دوس عليه وهينقلك للاكاونت مباشرا</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <a class="link-btn" href="zonero1892@zone.zn" target="_blank">📧 بريد إلكتروني <small>zonero1892@zone.zn</small></a>
+          <a class="link-btn" href="https://t.me/IEI_T" target="_blank">✉️ تليجرام <small>@IEI_T</small></a>
+          <a class="link-btn" href="https://youtube.com/@IEI_T" target="_blank">▶️ يوتيوب <small>@IEI_T</small></a>
+          <a class="link-btn" href="https://www.tiktok.com/@m_po.96" target="_blank">🎭 TikTok<small>@m_po.96</small></a>
+        </div>
+      </div>
+
+      <div style="height:18px"></div>
+
+      <div class="card">
+        <h3>حقوق</h3>
+        <p style="color:var(--muted)">جميع الحقوق محفوظة © ZONE — 2026</p>
+      </div>
+    </aside>
+
+    <footer>عملت موقع دا عشان اسهل عليك تعريف</footer>
+  </div>
+
+  <script>
+    // Theme toggle logic
+    const themeToggle = document.getElementById('themeToggle');
+    const htmlEl = document.documentElement;
+    const avatar = document.querySelector('.avatar');
+    const bigAvatar = document.querySelector('.big-avatar');
+    const bars = document.querySelectorAll('.bar > i');
+
+    function setThemeLight(isLight){
+      if(isLight){
+        htmlEl.classList.add('light-theme');
+        themeToggle.setAttribute('aria-pressed','true');
+        themeToggle.querySelector('span').textContent = 'الوضع المضيء';
+      } else {
+        htmlEl.classList.remove('light-theme');
+        themeToggle.setAttribute('aria-pressed','false');
+        themeToggle.querySelector('span').textContent = 'الوضع المظلم';
+      }
+    }
+
+    themeToggle.addEventListener('click', ()=>{
+      const isLight = htmlEl.classList.toggle('light-theme');
+      setThemeLight(isLight);
+    });
+
+    // animate skill bars on load
+    window.addEventListener('load', ()=>{
+      setTimeout(()=>{bars.forEach((b, i)=>{b.style.width = ['90%','85%','70%'][i]})},200);
+    });
+
+    // copy buttons
+    document.querySelectorAll('.copy-btn').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const val = btn.getAttribute('data-copy');
+        navigator.clipboard?.writeText(val).then(()=>{
+          const old = btn.textContent;
+          btn.textContent = 'تم النسخ ✓';
+          setTimeout(()=> btn.textContent = old, 1200);
+        }).catch(()=>{
+          alert('فشل النسخ — انسخ يدوياً: ' + val);
+        });
+      })
+    });
+
+    // ULTRY mode: particle generator + intense styles
+    const ultryBtn = document.getElementById('ultryBtn');
+    const particleWrap = document.getElementById('particle-wrap');
+    let ultryOn = false;
+    let particleInterval;
+
+    function spawnParticle(){
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random()*12 + 6;
+      p.style.width = size + 'px'; p.style.height = size + 'px';
+      p.style.left = Math.random()*100 + '%';
+      p.style.top = (70 + Math.random()*30) + '%';
+      p.style.animationDuration = (6 + Math.random()*4) + 's';
+      particleWrap.appendChild(p);
+      // remove after animation
+      setTimeout(()=>{p.remove()}, 11000);
+    }
+
+    function enableUltry(on){
+      ultryOn = on;
+      if(on){
+        htmlEl.classList.add('ultry-mode');
+        ultryBtn.textContent = 'وضع قرائه';
+        // spawn bursts
+        particleInterval = setInterval(()=>{
+          for(let i=0;i<6;i++){spawnParticle()}
+        }, 600);
+        // pulse avatars
+        avatar.style.transform = 'scale(1.06) rotate(-3deg)';
+        bigAvatar.style.transform = 'scale(1.12) rotate(-8deg)';
+        // small screen flash
+        document.querySelector('.ultry-overlay').style.animation = 'pulseFlash 900ms ease-in-out 3';
+      } else {
+        htmlEl.classList.remove('ultry-mode');
+        ultryBtn.textContent = 'وضع قرائه';
+        clearInterval(particleInterval);
+        particleWrap.innerHTML = '';
+        avatar.style.transform = '';
+        bigAvatar.style.transform = '';
+      }
+    }
+
+    ultryBtn.addEventListener('click', ()=>{
+      enableUltry(!ultryOn);
+    });
+
+    // small helper keybind: press U to toggle ULTRY
+    window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase() === 'u'){ enableUltry(!ultryOn); } });
+
+    // subtle overlay flash animation (for ULTRY)
+    const style = document.createElement('style');
+    style.textContent = '@keyframes pulseFlash{0%{opacity:0}30%{opacity:0.18}60%{opacity:0.06}100%{opacity:0.12}}';
+    document.head.appendChild(style);
+
+  </script>
+</body>
+</html>
